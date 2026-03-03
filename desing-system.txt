@@ -1,0 +1,26 @@
+🎨 Design System — catIN
+Filosofía: "Operational Minimal" — interfaces que desaparecen para que el trabajo fluya.
+
+Patrones UI
+
+Bordes: rounded-lg — radius: 0.75rem
+Espaciado: base p-6, gaps gap-6, nav items gap-0.5
+Densidad: Media-alta — mucha data visible sin scroll innecesario
+
+Componentes
+
+Sidebar: Labels de sección text-[10px] uppercase tracking-widest, punto verde en item activo
+Topbar: h-13 delgado, backdrop-blur-sm bg-background/80
+Tablas: Sin zebra striping, badge redondeado para estados
+Botones primarios: bg-primary sin sombras agresivas
+Botones secundarios: variant="outline" size="sm" discretos
+
+Patrones UX
+
+Modales para crear/editar — no páginas separadas
+Botones con estado isPending — feedback inmediato
+Errores inline bajo cada input — no toasts para validación
+Estados vacíos con mensaje — nunca pantalla en blanco
+
+Tono
+Herramienta seria pero no aburrida. Claridad total para el recepcionista a las 2am
