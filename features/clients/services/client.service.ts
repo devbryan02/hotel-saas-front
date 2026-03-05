@@ -20,4 +20,10 @@ export const clientService = {
     getById: (tenantId: string, clientId: string): Promise<ClientDetailResponse> => 
         apiClient.get(`/tenants/${tenantId}/clients/${clientId}`),
 
+    searchByQuery: (tenantId: string, query: string): Promise<ClientListItemResponse[]> => 
+        apiClient.get(`/tenants/${tenantId}/clients/search`, { params: { query: query } }),
+
+    searchByQueryAndStatus: (tenantId: string, query: string, status: string): Promise<ClientListItemResponse[]> => 
+        apiClient.get(`/tenants/${tenantId}/clients/search/status`, { params: { query: query, status: status } }),
+
 }

@@ -8,7 +8,8 @@ export interface ClientListItemResponse {
   document: string
   phone: string
   email: string
-  status: ClientStatus
+  status: ClientStatus,
+  lastStayAt: string | null
 }
 
 export interface ClientDetailResponse {

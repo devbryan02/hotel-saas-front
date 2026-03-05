@@ -13,6 +13,7 @@ import { UpdateClientForm } from './client-form'
 import { useUpdateClient } from '../hooks/use-clients'
 import type { UpdateClientFormValues } from '../schemas'
 import type { ClientListItemResponse } from '../types'
+import { Edit } from 'lucide-react'
 
 interface UpdateClientDialogProps {
   tenantId: string
@@ -33,7 +34,9 @@ export function UpdateClientDialog({ tenantId, client }: UpdateClientDialogProps
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">Editar</Button>
+        <Button variant={"outline"} size="sm" title='Editar cliente'>
+          <Edit /> 
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

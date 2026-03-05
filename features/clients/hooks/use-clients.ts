@@ -6,6 +6,8 @@ export const clientKeys = {
   all: (tenantId: string) => ['clients', tenantId] as const,
   byId: (tenantId: string, clientId: string) =>
     [...clientKeys.all(tenantId), clientId] as const,
+  search: (tenantId: string, query: string, status?: string) =>
+    [...clientKeys.all(tenantId), 'search', query, ...(status ? [status] : [])] as const,
 }
 
 export function useClients(tenantId: string) {
@@ -46,5 +48,25 @@ export function useUpdateClient(tenantId: string) {
       queryClient.invalidateQueries({ queryKey: clientKeys.all(tenantId) })
       queryClient.invalidateQueries({ queryKey: clientKeys.byId(tenantId, clientId) })
     },
+  })
+}
+
+export function useSearchClients(tenantId: string, query: string) {
+  return useQuery({
+    queryKey: clientKeys.search(tenantId, query),
+    queryFn: () => clientService.searchByQuery(tenantId, query),
+    enabled: !!tenantId && !!query,
+  })
+}
+
+export function useSearchClientsByStatus(
+  tenantId: string,
+  query: string,
+  status: string
+) {
+  return useQuery({
+    queryKey: clientKeys.search(tenantId, query, status),
+    queryFn: () => clientService.searchByQueryAndStatus(tenantId, query, status),
+    enabled: !!tenantId && !!query && !!status,
   })
 }

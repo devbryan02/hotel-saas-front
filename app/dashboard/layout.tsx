@@ -43,7 +43,7 @@ import { cn } from '@/lib/utils'
 const mainNav = [
   { label: 'Dashboard',    href: '/dashboard',   icon: LayoutDashboard },
   { label: 'Habitaciones', href: '/dashboard/rooms',        icon: BedDouble },
-  { label: 'Clientes',     href: '/dashboard/clients',      icon: Users },
+  { label: 'Huéspedes',     href: '/dashboard/clients',      icon: Users },
   { label: 'Ocupaciones',     href: '/dashboard/occupations',     icon: CalendarCheck },
 ]
 
@@ -55,7 +55,7 @@ const secondaryNav = [
 const routeLabels: Record<string, string> = {
   dashboard:  'Dashboard',
   rooms:      'Habitaciones',
-  clients:    'Clientes',
+  clients:    'Huéspedes',
   occupations:'Ocupaciones',
   reports:    'Reportes',
   support:    'Soporte',
