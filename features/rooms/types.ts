@@ -34,6 +34,7 @@ export interface UpdateRoomRequest {
 }
 
 export interface ActiveClientResponse {
+  occupationId: string 
   clientId: string
   fullName: string
   document: string
