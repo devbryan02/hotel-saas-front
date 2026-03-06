@@ -2,6 +2,15 @@ import type { Tenant } from '@/types'
 
 export type OccupationStatus = 'ACTIVE' | 'FINISHED' | 'CANCELLED'
 
+export interface PageResponse<T> {
+  content: T[]
+  currentPage: number
+  totalPages: number
+  totalElements: number
+  first: boolean
+  last: boolean
+}
+
 export interface OccupationListItemResponse {
   id: string
   roomNumber: string

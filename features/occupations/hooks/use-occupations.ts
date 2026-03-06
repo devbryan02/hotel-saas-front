@@ -4,14 +4,14 @@ import type { CreateOccupationRequest } from "../types";
 
 export const occupationKeys = {
   all: (tenantId: string) => ["occupations", tenantId] as const,
-  byId: (tenantId: string, occupationId: string) =>
-    [...occupationKeys.all(tenantId), occupationId] as const,
+  paginated: (tenantId: string, page: number, size: number) => ["occupations", tenantId, page, size] as const,
+  byId: (tenantId: string, occupationId: string) => ["occupations", tenantId, occupationId] as const,
 };
 
-export function useOccupations(tenantId: string) {
+export function useOccupations(tenantId: string, page: number = 0, size: number = 20) {
   return useQuery({
-    queryKey: occupationKeys.all(tenantId),
-    queryFn: () => occupationService.getAll(tenantId),
+    queryKey: occupationKeys.paginated(tenantId, page, size), 
+    queryFn: () => occupationService.getAll(tenantId, page, size),
     enabled: !!tenantId,
   });
 }
@@ -28,7 +28,6 @@ export function useCreateOccupation(tenantId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // roomId y clientId van en el mutationFn porque cambian por llamada 
     mutationFn: ({
       roomId,
       clientId,
@@ -48,11 +47,9 @@ export function useCheckOut(tenantId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // occupationId va en el mutationFn porque cambia por llamada 
     mutationFn: (occupationId: string) =>
       occupationService.checkOut(tenantId, occupationId),
     onSuccess: (_, occupationId) => {
-      // invalida lista Y el detalle específico
       queryClient.invalidateQueries({ queryKey: occupationKeys.all(tenantId) });
       queryClient.invalidateQueries({
         queryKey: occupationKeys.byId(tenantId, occupationId),

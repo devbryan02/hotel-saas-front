@@ -42,8 +42,8 @@ import { cn } from '@/lib/utils'
 // ─── NAV CONFIG ───────────────────────────────────────────────
 const mainNav = [
   { label: 'Dashboard',    href: '/dashboard',   icon: LayoutDashboard },
-  { label: 'Habitaciones', href: '/dashboard/rooms',        icon: BedDouble },
   { label: 'Huéspedes',     href: '/dashboard/clients',      icon: Users },
+  { label: 'Habitaciones', href: '/dashboard/rooms',        icon: BedDouble },
   { label: 'Ocupaciones',     href: '/dashboard/occupations',     icon: CalendarCheck },
 ]
 

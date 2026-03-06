@@ -3,12 +3,13 @@ import type {
     CreateOccupationRequest,
     OccupationDetailResponse,
     OccupationListItemResponse,
+    PageResponse
 } from "../types";
 
 export const occupationService = {
 
-    getAll: (tenantId: string): Promise<OccupationListItemResponse[]> =>
-        apiClient.get(`/tenants/${tenantId}/occupations`),
+    getAll: (tenantId: string, page: number, size: number): Promise<PageResponse<OccupationListItemResponse>> =>
+        apiClient.get(`/tenants/${tenantId}/occupations`, { params: { page, size } }),
 
     create: (tenantId: string, roomId: string, clientId: string, data: CreateOccupationRequest): Promise<OccupationDetailResponse> =>
         apiClient.post(`/tenants/${tenantId}/occupations/rooms/${roomId}/clients/${clientId}`, data),
