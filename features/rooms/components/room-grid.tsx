@@ -134,7 +134,7 @@ export function RoomGrid({ tenantId }: RoomGridProps) {
     }, {} as Record<RoomStatus, number>)
 
     return (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
 
             {/* Header */}
             <div className="flex items-center justify-between">

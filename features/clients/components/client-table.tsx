@@ -15,9 +15,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { getClientColumns } from './client-columns'
+import { ClientCard } from './client-card'
 import { CreateClientDialog } from './create-client-dialog'
 import { ClientSearch } from './client-search'
 import { useClients, useSearchClients, useSearchClientsByStatus } from '../hooks/use-clients'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { Users, AlertCircle, Loader2 } from 'lucide-react'
 
 type StatusFilter = 'ALL' | 'ACTIVE' | 'INACTIVE'
@@ -30,32 +32,22 @@ export function ClientTable({ tenantId }: ClientTableProps) {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [status, setStatus] = useState<StatusFilter>('ALL')
+  const isMobile = useIsMobile()
 
-  // ── Debounce + mínimo 3 caracteres ──
   useEffect(() => {
-    if (query.trim().length === 0) {
-      setDebouncedQuery('')
-      return
-    }
-
+    if (query.trim().length === 0) { setDebouncedQuery(''); return }
     if (query.trim().length < 3) return
-
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query.trim())
-    }, 400)
-
+    const timer = setTimeout(() => setDebouncedQuery(query.trim()), 400)
     return () => clearTimeout(timer)
   }, [query])
 
   const hasQuery = debouncedQuery.length > 0
   const hasStatus = status !== 'ALL'
 
-  // ── Queries ──
-  const allClients       = useClients(tenantId)
-  const byQuery          = useSearchClients(tenantId, debouncedQuery)
-  const byQueryAndStatus = useSearchClientsByStatus(tenantId, debouncedQuery, status)
+  const allClients        = useClients(tenantId)
+  const byQuery           = useSearchClients(tenantId, debouncedQuery)
+  const byQueryAndStatus  = useSearchClientsByStatus(tenantId, debouncedQuery, status)
 
-  // ── Selección activa ──
   const active = hasQuery && hasStatus
     ? byQueryAndStatus
     : hasQuery
@@ -65,12 +57,14 @@ export function ClientTable({ tenantId }: ClientTableProps) {
   const { data: clients = [], isLoading, isError } = active
 
   const columns = getClientColumns(tenantId)
-
   const table = useReactTable({
     data: clients,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
+
+  // ── Estados compartidos ──
+  const isEmpty = !isLoading && !isError && clients.length === 0
 
   return (
     <div className="flex flex-col gap-5">
@@ -106,7 +100,7 @@ export function ClientTable({ tenantId }: ClientTableProps) {
       {isLoading && (
         <div className="flex items-center justify-center gap-2 rounded-lg border border-dashed py-16 text-muted-foreground">
           <Loader2 className="size-4 animate-spin" />
-          <span className="text-sm">Cargando clientes...</span>
+          <span className="text-sm">Cargando huéspedes...</span>
         </div>
       )}
 
@@ -114,12 +108,36 @@ export function ClientTable({ tenantId }: ClientTableProps) {
       {isError && (
         <div className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-destructive/40 py-16 text-destructive">
           <AlertCircle className="size-4" />
-          <span className="text-sm">Error al cargar clientes</span>
+          <span className="text-sm">Error al cargar huéspedes</span>
         </div>
       )}
 
-      {/* ── Tabla ── */}
-      {!isLoading && !isError && (
+      {/* ── Empty ── */}
+      {isEmpty && (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed py-16 text-muted-foreground">
+          <div className="flex size-10 items-center justify-center rounded-full bg-muted">
+            <Users className="size-5" />
+          </div>
+          <p className="text-sm font-medium">
+            {hasQuery ? 'Sin resultados para tu búsqueda' : 'No hay huéspedes registrados'}
+          </p>
+          <p className="text-xs">
+            {hasQuery ? 'Intenta con otro término o filtro' : 'Crea el primer huésped con el botón de arriba'}
+          </p>
+        </div>
+      )}
+
+      {/* ── MOBILE: Cards ── */}
+      {!isLoading && !isError && !isEmpty && isMobile && (
+        <div className="flex flex-col gap-2">
+          {clients.map(client => (
+            <ClientCard key={client.id} client={client} tenantId={tenantId} />
+          ))}
+        </div>
+      )}
+
+      {/* ── DESKTOP: Tabla ── */}
+      {!isLoading && !isError && !isEmpty && !isMobile && (
         <div className="overflow-hidden rounded-lg border border-border">
           <Table>
             <TableHeader>
@@ -136,38 +154,19 @@ export function ClientTable({ tenantId }: ClientTableProps) {
                 </TableRow>
               ))}
             </TableHeader>
-
             <TableBody>
-              {table.getRowModel().rows.length === 0 ? (
-                <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={columns.length}>
-                    <div className="flex flex-col items-center justify-center gap-2 py-16 text-muted-foreground">
-                      <div className="flex size-10 items-center justify-center rounded-full bg-muted">
-                        <Users className="size-5" />
-                      </div>
-                      <p className="text-sm font-medium">
-                        {hasQuery ? 'Sin resultados para tu búsqueda' : 'No hay clientes registrados'}
-                      </p>
-                      <p className="text-xs">
-                        {hasQuery ? 'Intenta con otro término o filtro' : 'Crea el primer cliente con el botón de arriba'}
-                      </p>
-                    </div>
-                  </TableCell>
+              {table.getRowModel().rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  className="group border-b border-border/60 transition-colors last:border-0"
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id} className="px-4 py-3 text-sm">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ) : (
-                table.getRowModel().rows.map(row => (
-                  <TableRow
-                    key={row.id}
-                    className="group border-b border-border/60 transition-colors last:border-0"
-                  >
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell key={cell.id} className="px-4 py-3 text-sm">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              )}
+              ))}
             </TableBody>
           </Table>
         </div>

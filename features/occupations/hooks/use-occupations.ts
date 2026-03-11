@@ -9,12 +9,12 @@ export const occupationKeys = {
   byId: (tenantId: string, occupationId: string) => ["occupations", tenantId, occupationId] as const,
 };
 
-export function useOccupations(tenantId: string, page: number = 0, size: number = 20) {
+export function useOccupations(tenantId: string, page: number = 0, size: number = 20, status?: string) {
   return useQuery({
-    queryKey: occupationKeys.paginated(tenantId, page, size), 
-    queryFn: () => occupationService.getAll(tenantId, page, size),
+    queryKey: [...occupationKeys.paginated(tenantId, page, size), status] as const,
+    queryFn: () => occupationService.getAll(tenantId, page, size, status),
     enabled: !!tenantId,
-  });
+  })
 }
 
 export function useOccupationById(tenantId: string, occupationId: string) {

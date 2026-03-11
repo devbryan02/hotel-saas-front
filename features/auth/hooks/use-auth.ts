@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { authService } from '../services/auth.service'
-import { useAuthContext } from '../context/auth-contex'
+import { useAuthContext } from '../context/auth-context'
 import type { LoginRequest } from '../types'
 import { useCallback } from 'react'
 

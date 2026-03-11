@@ -1,9 +1,9 @@
-function OccupationPage() {
-    return ( 
-        <div className="flex items-center justify-center h-screen">
-            <h1 className="text-4xl font-bold">Occupations Page</h1>
-        </div>
-     );
-}
+import { OccupationsClient } from "@/features/occupations/components/occupation-client"
 
-export default OccupationPage;
+export default function OccupationsPage() {
+  return (
+    <div className="p-4 md:p-6">
+      <OccupationsClient />
+    </div>
+  )
+}

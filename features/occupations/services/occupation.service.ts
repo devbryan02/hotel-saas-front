@@ -8,8 +8,8 @@ import type {
 
 export const occupationService = {
 
-    getAll: (tenantId: string, page: number, size: number): Promise<PageResponse<OccupationListItemResponse>> =>
-        apiClient.get(`/tenants/${tenantId}/occupations`, { params: { page, size } }),
+    getAll: (tenantId: string, page: number, size: number, status?: string ): Promise<PageResponse<OccupationListItemResponse>> =>
+        apiClient.get(`/tenants/${tenantId}/occupations`, { params: { page, size, ...(status && { status }) } }),
 
     create: (tenantId: string, roomId: string, clientId: string, data: CreateOccupationRequest): Promise<OccupationDetailResponse> =>
         apiClient.post(`/tenants/${tenantId}/occupations/rooms/${roomId}/clients/${clientId}`, data),
