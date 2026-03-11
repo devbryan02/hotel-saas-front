@@ -1,11 +1,18 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Loader2, Hash, BedDouble, DollarSign, Save, PlusSquare } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Loader2, Hash, DollarSign, Save, PlusSquare } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   createRoomSchema,
@@ -15,9 +22,26 @@ import {
 } from '../schemas'
 import type { RoomListItemResponse, RoomStatus, RoomType } from '../types'
 
-// ============================================
-// FIELD (texto/número)
-// ============================================
+// ─────────────────────────────────────────
+// OPCIONES
+// ─────────────────────────────────────────
+const ROOM_TYPE_OPTIONS: { label: string; value: RoomType }[] = [
+  { label: 'Simple',      value: 'SIMPLE' },
+  { label: 'Doble',       value: 'DOBLE' },
+  { label: 'Suite',       value: 'SUITE' },
+  { label: 'Matrimonial', value: 'MATRIMONIAL' },
+]
+
+const ROOM_STATUS_OPTIONS: { label: string; value: RoomStatus }[] = [
+  { label: 'Disponible',    value: 'AVAILABLE' },
+  { label: 'Ocupada',       value: 'OCCUPIED' },
+  { label: 'Mantenimiento', value: 'MAINTENANCE' },
+  { label: 'Limpieza',      value: 'CLEANING' },
+]
+
+// ─────────────────────────────────────────
+// FIELD (texto / número)
+// ─────────────────────────────────────────
 interface FieldProps {
   id: string
   label: string
@@ -50,61 +74,47 @@ function Field({ id, label, placeholder, error, icon: Icon, type = 'text', regis
   )
 }
 
-// ============================================
-// SELECT FIELD
-// ============================================
-interface SelectFieldProps {
-  id: string
+// ─────────────────────────────────────────
+// SELECT FIELD (shadcn — necesita Controller)
+// ─────────────────────────────────────────
+interface ShadcnSelectFieldProps {
   label: string
-  error?: string
+  value: string
+  onChange: (value: string) => void
   options: { label: string; value: string }[]
-  registration: object
+  error?: string
+  placeholder?: string
 }
 
-function SelectField({ id, label, error, options, registration }: SelectFieldProps) {
+function ShadcnSelectField({ label, value, onChange, options, error, placeholder = 'Seleccionar...' }: ShadcnSelectFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor={id} className="text-sm font-medium">{label}</Label>
-      <select
-        id={id}
-        {...registration}
-        className={cn(
-          'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
-          error && 'border-destructive focus-visible:ring-destructive/30'
-        )}
-      >
-        <option value="">Seleccionar...</option>
-        {options.map(o => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
-      </select>
+      <Label className="text-sm font-medium">{label}</Label>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className={cn(error && 'border-destructive focus:ring-destructive/30')}>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map(o => (
+            <SelectItem key={o.value} value={o.value}>
+              {o.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   )
 }
 
-const ROOM_TYPE_OPTIONS: { label: string; value: RoomType }[] = [
-  { label: 'Simple', value: 'SIMPLE' },
-  { label: 'Doble', value: 'DOBLE' },
-  { label: 'Suite', value: 'SUITE' },
-  { label: 'Matrimonial', value: 'MATRIMONIAL' },
-]
-
-const ROOM_STATUS_OPTIONS: { label: string; value: RoomStatus }[] = [
-  { label: 'Disponible', value: 'AVAILABLE' },
-  { label: 'Ocupado', value: 'OCCUPIED' },
-  { label: 'Mantenimiento', value: 'MAINTENANCE' },
-  { label: 'Limpieza', value: 'CLEANING' },
-]
-
-// ============================================
-// CREAR
-// ============================================
+// ─────────────────────────────────────────
+// CREAR HABITACIÓN
+// ─────────────────────────────────────────
 export function CreateRoomForm({ onSubmit, isPending }: {
   onSubmit: (data: CreateRoomFormValues) => void
   isPending: boolean
 }) {
-  const { register, handleSubmit, formState: { errors } } = useForm<CreateRoomFormValues>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<CreateRoomFormValues>({
     resolver: zodResolver(createRoomSchema),
   })
 
@@ -115,10 +125,18 @@ export function CreateRoomForm({ onSubmit, isPending }: {
         icon={Hash} error={errors.roomNumber?.message}
         registration={register('roomNumber')}
       />
-      <SelectField
-        id="roomType" label="Tipo de habitación"
-        options={ROOM_TYPE_OPTIONS} error={errors.roomType?.message}
-        registration={register('roomType')}
+      <Controller
+        control={control}
+        name="roomType"
+        render={({ field }) => (
+          <ShadcnSelectField
+            label="Tipo de habitación"
+            value={field.value ?? ''}
+            onChange={field.onChange}
+            options={ROOM_TYPE_OPTIONS}
+            error={errors.roomType?.message}
+          />
+        )}
       />
       <Field
         id="pricePerNight" label="Precio por noche (S/.)" placeholder="150"
@@ -135,21 +153,21 @@ export function CreateRoomForm({ onSubmit, isPending }: {
   )
 }
 
-// ============================================
-// EDITAR
-// ============================================
+// ─────────────────────────────────────────
+// EDITAR HABITACIÓN
+// ─────────────────────────────────────────
 export function UpdateRoomForm({ defaultValues, onSubmit, isPending }: {
   defaultValues: RoomListItemResponse
   onSubmit: (data: UpdateRoomFormValues) => void
   isPending: boolean
 }) {
-  const { register, handleSubmit, formState: { errors } } = useForm<UpdateRoomFormValues>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<UpdateRoomFormValues>({
     resolver: zodResolver(updateRoomSchema),
     defaultValues: {
-      roomNumber: defaultValues.roomNumber,
-      roomType: defaultValues.roomType as RoomType,
+      roomNumber:    defaultValues.roomNumber,
+      roomType:      defaultValues.roomType as RoomType,
       pricePerNight: defaultValues.pricePerNight,
-      status: defaultValues.status,
+      status:        defaultValues.status,
     },
   })
 
@@ -161,15 +179,31 @@ export function UpdateRoomForm({ defaultValues, onSubmit, isPending }: {
         registration={register('roomNumber')}
       />
       <div className="grid grid-cols-2 gap-3">
-        <SelectField
-          id="roomType" label="Tipo"
-          options={ROOM_TYPE_OPTIONS} error={errors.roomType?.message}
-          registration={register('roomType')}
+        <Controller
+          control={control}
+          name="roomType"
+          render={({ field }) => (
+            <ShadcnSelectField
+              label="Tipo"
+              value={field.value ?? ''}
+              onChange={field.onChange}
+              options={ROOM_TYPE_OPTIONS}
+              error={errors.roomType?.message}
+            />
+          )}
         />
-        <SelectField
-          id="status" label="Estado"
-          options={ROOM_STATUS_OPTIONS} error={errors.status?.message}
-          registration={register('status')}
+        <Controller
+          control={control}
+          name="status"
+          render={({ field }) => (
+            <ShadcnSelectField
+              label="Estado"
+              value={field.value ?? ''}
+              onChange={field.onChange}
+              options={ROOM_STATUS_OPTIONS}
+              error={errors.status?.message}
+            />
+          )}
         />
       </div>
       <Field

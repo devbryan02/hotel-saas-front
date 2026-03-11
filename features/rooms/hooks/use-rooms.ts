@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { roomService } from '../services/room.service'
 import type { CreateRoomRequest, UpdateRoomRequest } from '../types'
+import { toast } from 'sonner'
 
 export const roomKeys = {
   all: (tenantId: string) => ['rooms', tenantId] as const,
@@ -24,6 +25,9 @@ export function useCreateRoom(tenantId: string) {
       roomService.create(tenantId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roomKeys.all(tenantId) })
+     toast.success('Habitación creada exitosamente',{
+      description: 'La habitación ha sido creada exitosamente',
+     })    
     },
   })
 }
@@ -37,6 +41,9 @@ export function useUpdateRoom(tenantId: string) {
     onSuccess: (_, { roomId }) => {
       queryClient.invalidateQueries({ queryKey: roomKeys.all(tenantId) })
       queryClient.invalidateQueries({ queryKey: roomKeys.byId(tenantId, roomId) })
+      toast.success('Habitación actualizada', {
+        description: 'La habitación ha sido actualizada exitosamente',
+      })
     },
   })
 }

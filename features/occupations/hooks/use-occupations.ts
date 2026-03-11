@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { occupationService } from "../services/occupation.service";
 import type { CreateOccupationRequest } from "../types";
+import { toast } from "sonner";
 
 export const occupationKeys = {
   all: (tenantId: string) => ["occupations", tenantId] as const,
@@ -39,6 +40,9 @@ export function useCreateOccupation(tenantId: string) {
     }) => occupationService.create(tenantId, roomId, clientId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: occupationKeys.all(tenantId) });
+      toast.success('Ocupación creada', {
+        description: 'La ocupación ha sido creada exitosamente',
+      });
     },
   });
 }
@@ -53,6 +57,9 @@ export function useCheckOut(tenantId: string) {
       queryClient.invalidateQueries({ queryKey: occupationKeys.all(tenantId) });
       queryClient.invalidateQueries({
         queryKey: occupationKeys.byId(tenantId, occupationId),
+      });
+      toast.success('Checkout realizado', {
+        description: 'El checkout ha sido realizado exitosamente',
       });
     },
   });

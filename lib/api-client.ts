@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { toast } from 'sonner'
 
 const apiClient = axios.create({
   baseURL: "http://localhost:8080/api/v1",
@@ -14,9 +15,33 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    if (error.response?.status === 401) window.location.href = '/login'
-    return Promise.reject(error.response?.data ?? error)
+    const status = error.response?.status
+    const data = error.response?.data
+
+    if (status === 401) {
+      window.location.href = '/login'
+      return Promise.reject(data ?? error)
+    }
+
+    const message = data?.message || data?.error || 'Ocurrió un error inesperado'
+
+    toast.error(getErrorTitle(status), {
+      description: message,
+    })
+
+    return Promise.reject(data ?? error)
   }
 )
+
+function getErrorTitle(status?: number): string {
+  switch (status) {
+    case 400: return 'Datos inválidos'
+    case 403: return 'Sin permisos'
+    case 404: return 'No encontrado'
+    case 409: return 'Conflicto'
+    case 500: return 'Error del servidor'
+    default:  return 'Error'
+  }
+}
 
 export default apiClient

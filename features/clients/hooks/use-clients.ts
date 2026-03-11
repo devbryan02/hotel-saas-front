@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { clientService } from '../services/client.service'
 import type { CreateClientRequest, UpdateClientRequest } from '../types'
+import { toast } from 'sonner'
 
 export const clientKeys = {
   all: (tenantId: string) => ['clients', tenantId] as const,
@@ -34,6 +35,9 @@ export function useCreateClient(tenantId: string) {
       clientService.create(tenantId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: clientKeys.all(tenantId) })
+      toast.success('Cliente creado', {
+        description: 'El cliente ha sido creado exitosamente',
+      })
     },
   })
 }
@@ -47,6 +51,9 @@ export function useUpdateClient(tenantId: string) {
     onSuccess: (_, { clientId }) => {
       queryClient.invalidateQueries({ queryKey: clientKeys.all(tenantId) })
       queryClient.invalidateQueries({ queryKey: clientKeys.byId(tenantId, clientId) })
+      toast.success('Cliente actualizado', {
+        description: 'El cliente ha sido actualizado exitosamente',
+      })
     },
   })
 }
