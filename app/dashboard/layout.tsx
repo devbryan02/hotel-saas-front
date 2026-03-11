@@ -38,27 +38,29 @@ import {
 } from '@/components/ui/breadcrumb'
 import { ModeToggle } from '@/components/shared/ModeToggle'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useLogout } from '@/features/auth/hooks/use-auth'
 
 // ─── NAV CONFIG ───────────────────────────────────────────────
 const mainNav = [
-  { label: 'Dashboard',    href: '/dashboard',   icon: LayoutDashboard },
-  { label: 'Huéspedes',     href: '/dashboard/clients',      icon: Users },
-  { label: 'Habitaciones', href: '/dashboard/rooms',        icon: BedDouble },
-  { label: 'Ocupaciones',     href: '/dashboard/occupations',     icon: CalendarCheck },
+  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { label: 'Huéspedes', href: '/dashboard/clients', icon: Users },
+  { label: 'Habitaciones', href: '/dashboard/rooms', icon: BedDouble },
+  { label: 'Ocupaciones', href: '/dashboard/occupations', icon: CalendarCheck },
 ]
 
 const secondaryNav = [
-  { label: 'Reportes',  href: '/dashboard/reports', icon: FileText },
-  { label: 'Soporte',   href: '/dashboard/support', icon: HelpCircle },
+  { label: 'Reportes', href: '/dashboard/reports', icon: FileText },
+  { label: 'Soporte', href: '/dashboard/support', icon: HelpCircle },
 ]
 
 const routeLabels: Record<string, string> = {
-  dashboard:  'Dashboard',
-  rooms:      'Habitaciones',
-  clients:    'Huéspedes',
-  occupations:'Ocupaciones',
-  reports:    'Reportes',
-  support:    'Soporte',
+  dashboard: 'Dashboard',
+  rooms: 'Habitaciones',
+  clients: 'Huéspedes',
+  occupations: 'Ocupaciones',
+  reports: 'Reportes',
+  support: 'Soporte',
 }
 
 // ─── NAV ITEM ─────────────────────────────────────────────────
@@ -99,6 +101,10 @@ function NavItem({ label, href, icon: Icon }: { label: string; href: string; ico
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const segments = pathname.split('/').filter(Boolean)
+
+  const { user } = useAuth()
+  const logout = useLogout()
+
 
   return (
     <SidebarProvider>
@@ -156,18 +162,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <Avatar className="size-8 shrink-0">
               <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
-                BC
+                {user?.email?.slice(0, 2).toUpperCase() ?? 'US'}
               </AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-1 flex-col">
-              <span className="truncate text-xs font-semibold text-sidebar-foreground">
-                Bryan Cardenas
-              </span>
-              <span className="truncate text-[11px] text-sidebar-foreground/50">
-                bryan@gmail.com
-              </span>
+              <p className="truncate text-xs font-medium">{user?.email}</p>
+              <p className="text-[10px] text-muted-foreground capitalize">
+                {user?.role?.toLowerCase()}
+              </p>
             </div>
-            <button className="shrink-0 rounded-md p-1 text-sidebar-foreground/40 transition-colors hover:text-destructive">
+            <button
+              onClick={logout}
+              className="rounded-md p-1.5 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground transition-colors"
+            >
               <LogOut className="size-4" />
             </button>
           </div>
