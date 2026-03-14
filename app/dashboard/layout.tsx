@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   BedDouble,
@@ -10,7 +10,7 @@ import {
   FileText,
   HelpCircle,
   LogOut,
-} from 'lucide-react'
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -25,9 +25,9 @@ import {
   SidebarProvider,
   SidebarInset,
   SidebarTrigger,
-} from '@/components/ui/sidebar'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -35,40 +35,49 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
-import { ModeToggle } from '@/components/shared/ModeToggle'
-import { cn } from '@/lib/utils'
-import { useAuth } from '@/features/auth/hooks/use-auth'
-import { useLogout } from '@/features/auth/hooks/use-auth'
+} from "@/components/ui/breadcrumb";
+import { ModeToggle } from "@/components/shared/ModeToggle";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useLogout } from "@/features/auth/hooks/use-auth";
 
 // ─── NAV CONFIG ───────────────────────────────────────────────
 const mainNav = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Huéspedes', href: '/dashboard/clients', icon: Users },
-  { label: 'Habitaciones', href: '/dashboard/rooms', icon: BedDouble },
-  { label: 'Ocupaciones', href: '/dashboard/occupations', icon: CalendarCheck },
-]
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Huéspedes", href: "/dashboard/clients", icon: Users },
+  { label: "Habitaciones", href: "/dashboard/rooms", icon: BedDouble },
+  { label: "Ocupaciones", href: "/dashboard/occupations", icon: CalendarCheck },
+];
 
 const secondaryNav = [
-  { label: 'Reportes', href: '/dashboard/reports', icon: FileText },
-  { label: 'Soporte', href: '/dashboard/support', icon: HelpCircle },
-]
+  { label: "Reportes", href: "/dashboard/reports", icon: FileText },
+  { label: "Soporte", href: "/dashboard/support", icon: HelpCircle },
+];
 
 const routeLabels: Record<string, string> = {
-  dashboard: 'Dashboard',
-  rooms: 'Habitaciones',
-  clients: 'Huéspedes',
-  occupations: 'Ocupaciones',
-  reports: 'Reportes',
-  support: 'Soporte',
-}
+  dashboard: "Dashboard",
+  rooms: "Habitaciones",
+  clients: "Huéspedes",
+  occupations: "Ocupaciones",
+  reports: "Reportes",
+  support: "Soporte",
+};
 
 // ─── NAV ITEM ─────────────────────────────────────────────────
-function NavItem({ label, href, icon: Icon }: { label: string; href: string; icon: React.ElementType }) {
-  const pathname = usePathname()
-  const isActive = href === '/dashboard'
-    ? pathname === href
-    : pathname === href || pathname.startsWith(href + '/')
+function NavItem({
+  label,
+  href,
+  icon: Icon,
+}: {
+  label: string;
+  href: string;
+  icon: React.ElementType;
+}) {
+  const pathname = usePathname();
+  const isActive =
+    href === "/dashboard"
+      ? pathname === href
+      : pathname === href || pathname.startsWith(href + "/");
 
   return (
     <SidebarMenuItem>
@@ -76,16 +85,20 @@ function NavItem({ label, href, icon: Icon }: { label: string; href: string; ico
         asChild
         isActive={isActive}
         className={cn(
-          'group h-9 rounded-lg px-3 text-sm font-medium transition-all',
-          'text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent',
-          isActive && 'bg-sidebar-accent text-sidebar-foreground font-semibold'
+          "group h-9 rounded-lg px-3 text-sm font-medium transition-all",
+          "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent",
+          isActive && "bg-sidebar-accent text-sidebar-foreground font-semibold",
         )}
       >
         <Link href={href} className="flex items-center gap-3">
-          <Icon className={cn(
-            'size-4 shrink-0 transition-colors',
-            isActive ? 'text-primary' : 'text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80'
-          )} />
+          <Icon
+            className={cn(
+              "size-4 shrink-0 transition-colors",
+              isActive
+                ? "text-primary"
+                : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80",
+            )}
+          />
           <span>{label}</span>
           {/* Indicador activo */}
           {isActive && (
@@ -94,23 +107,25 @@ function NavItem({ label, href, icon: Icon }: { label: string; href: string; ico
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
-  )
+  );
 }
 
 // ─── LAYOUT PRINCIPAL ─────────────────────────────────────────
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const segments = pathname.split('/').filter(Boolean)
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
 
-  const { user } = useAuth()
-  const logout = useLogout()
-
+  const { user } = useAuth();
+  const logout = useLogout();
 
   return (
     <SidebarProvider>
       {/* ══ SIDEBAR ══════════════════════════════════════════ */}
       <Sidebar className="border-r border-sidebar-border bg-sidebar">
-
         {/* Logo */}
         <SidebarHeader className="px-5 py-5">
           <div className="flex items-center gap-2.5">
@@ -124,7 +139,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </SidebarHeader>
 
         <SidebarContent className="px-3 py-2">
-
           {/* Nav principal */}
           <SidebarGroup className="p-0">
             <SidebarGroupLabel className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/40">
@@ -154,7 +168,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-
         </SidebarContent>
 
         {/* Footer — usuario */}
@@ -162,7 +175,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <Avatar className="size-8 shrink-0">
               <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
-                {user?.email?.slice(0, 2).toUpperCase() ?? 'US'}
+                {user?.email?.slice(0, 2).toUpperCase() ?? "US"}
               </AvatarFallback>
             </Avatar>
             <div className="flex min-w-0 flex-1 flex-col">
@@ -179,12 +192,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </button>
           </div>
         </SidebarFooter>
-
       </Sidebar>
 
       {/* ══ CONTENIDO ════════════════════════════════════════ */}
       <SidebarInset className="bg-background">
-
         {/* Topbar */}
         <header className="sticky top-0 z-10 flex h-13 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-sm">
           <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
@@ -202,9 +213,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </BreadcrumbLink>
               </BreadcrumbItem>
               {segments.map((seg, i) => {
-                const isLast = i === segments.length - 1
-                const label = routeLabels[seg] ?? seg
-                const href = `/${segments.slice(0, i + 1).join('/')}`
+                const isLast = i === segments.length - 1;
+                const label = routeLabels[seg] ?? seg;
+                const href = `/${segments.slice(0, i + 1).join("/")}`;
                 return (
                   <span key={seg} className="flex items-center gap-1.5">
                     <BreadcrumbSeparator className="text-muted-foreground/40" />
@@ -223,7 +234,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       )}
                     </BreadcrumbItem>
                   </span>
-                )
+                );
               })}
             </BreadcrumbList>
           </Breadcrumb>
@@ -238,8 +249,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">
           {children}
         </main>
-
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

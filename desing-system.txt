@@ -1,4 +1,4 @@
-🎨 Design System — catIN
+Design System — catIN
 Filosofía: "Operational Minimal" — interfaces que desaparecen para que el trabajo fluya.
 
 Patrones UI

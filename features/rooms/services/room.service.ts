@@ -1,10 +1,10 @@
-import apiClient from '@/lib/api-client'
+import apiClient from "@/lib/api-client";
 import type {
   RoomDetailResponse,
   CreateRoomRequest,
   UpdateRoomRequest,
-  RoomListItemResponse
-} from '../types'
+  RoomListItemResponse,
+} from "../types";
 
 export const roomService = {
   getAll: (tenantId: string): Promise<RoomListItemResponse[]> =>
@@ -15,4 +15,4 @@ export const roomService = {
 
   update: (tenantId: string, roomId: string, data: UpdateRoomRequest): Promise<RoomDetailResponse> =>
     apiClient.put(`/tenants/${tenantId}/rooms/${roomId}`, data),
-}
+};

@@ -52,7 +52,6 @@ export function OccupationsList({ tenantId }: OccupationsListProps) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL')
   const isMobile = useIsMobile()
 
-  // ✅ status al backend — filtro real con paginación correcta
   const statusParam = statusFilter === 'ALL' ? undefined : statusFilter
   const { data, isLoading, isError } = useOccupations(tenantId, page, PAGE_SIZE, statusParam)
 

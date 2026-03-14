@@ -1,6 +1,4 @@
-import type { Tenant } from '@/types'
-
-export type OccupationStatus = 'ACTIVE' | 'FINISHED' | 'CANCELLED'
+export type OccupationStatus = 'ACTIVE' | 'FINISHED'
 
 export interface PageResponse<T> {
   content: T[]
@@ -37,7 +35,7 @@ export interface OccupationDetailResponse {
   nights: number
   totalPrice: number
   status: OccupationStatus
-  createdAt: string     
+  createdAt: string
 }
 
 export interface CreateOccupationRequest {
