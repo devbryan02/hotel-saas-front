@@ -11,45 +11,35 @@ import { CreateOccupationSheet } from './create-occupation-sheet'
 
 // ── Config visual por estado ──
 const STATUS_CONFIG: Record<RoomStatus, {
-  label: string
-  bg: string
-  border: string
-  dot: string
-  textColor: string
-  icon: React.ElementType | null
+    label: string
+    dot: string
+    textColor: string
+    icon: React.ElementType | null
 }> = {
-  AVAILABLE: {
-    label: 'Libre',
-    bg: 'bg-emerald-50 dark:bg-emerald-950/30',
-    border: 'border-emerald-200 dark:border-emerald-800/50',
-    dot: 'bg-emerald-400',
-    textColor: 'text-emerald-700 dark:text-emerald-400',
-    icon: null
-  },
-  OCCUPIED: {
-    label: 'Ocupada',
-    bg: 'bg-blue-50 dark:bg-blue-950/30',
-    border: 'border-blue-200 dark:border-blue-800/50',
-    dot: 'bg-blue-400',
-    textColor: 'text-blue-700 dark:text-blue-400',
-    icon: User
-  },
-  MAINTENANCE: {
-    label: 'Mantenimiento',
-    bg: 'bg-amber-50 dark:bg-amber-950/30',
-    border: 'border-amber-200 dark:border-amber-800/50',
-    dot: 'bg-amber-400',
-    textColor: 'text-amber-700 dark:text-amber-400',
-    icon: Wrench
-  },
-  CLEANING: {
-    label: 'Limpieza',
-    bg: 'bg-violet-50 dark:bg-violet-950/30',
-    border: 'border-violet-200 dark:border-violet-800/50',
-    dot: 'bg-violet-400',
-    textColor: 'text-violet-700 dark:text-violet-400',
-    icon: Sparkles
-  },
+    AVAILABLE: {
+        label: 'Libre',
+        dot: 'bg-emerald-400',
+        textColor: 'text-emerald-700 dark:text-emerald-400',
+        icon: null
+    },
+    OCCUPIED: {
+        label: 'Ocupada',
+        dot: 'bg-blue-400',
+        textColor: 'text-blue-700 dark:text-blue-400',
+        icon: User
+    },
+    MAINTENANCE: {
+        label: 'Mantenimiento',
+        dot: 'bg-amber-400',
+        textColor: 'text-amber-700 dark:text-amber-400',
+        icon: Wrench
+    },
+    CLEANING: {
+        label: 'Limpieza',
+        dot: 'bg-violet-400',
+        textColor: 'text-violet-700 dark:text-violet-400',
+        icon: Sparkles
+    },
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -80,22 +70,18 @@ function RoomCard({
     return (
         <button
             onClick={() => onClick(room)}
-            className={cn(
-                'flex flex-col gap-2 rounded-2xl border-2 p-4 text-left transition-all active:scale-95',
-                'hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/40',
-                cfg.bg, cfg.border
-            )}
+            className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-4 text-left transition-all active:scale-95 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/40 w-full"
         >
             <div className="flex items-start justify-between">
-                <span className="text-2xl font-bold tracking-tight dark:text-white">{room.roomNumber}</span>
-                <span className={cn('mt-1 size-2.5 rounded-full', cfg.dot)} />
+                <span className="text-2xl font-bold tracking-tight">{room.roomNumber}</span>
+                <span className={cn('mt-1 size-2.5 rounded-full shrink-0', cfg.dot)} />
             </div>
 
             <span className="text-xs font-medium text-muted-foreground">
                 {TYPE_LABELS[room.roomType] ?? room.roomType}
             </span>
 
-            <span className="text-sm font-semibold dark:text-white">
+            <span className="text-sm font-semibold">
                 {new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(room.pricePerNight)}
                 <span className="text-xs font-normal text-muted-foreground"> /noche</span>
             </span>

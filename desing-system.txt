@@ -1,26 +1,25 @@
-Design System — catIN
-Filosofía: "Operational Minimal" — interfaces que desaparecen para que el trabajo fluya.
+Design System — cat.IN
+"Operational Minimal" — la interfaz desaparece para que el trabajo fluya.
 
-Patrones UI
+Colores
+El verde primario hsl(149 58% 59%) es la única acción. Los estados tienen su propio color fijo: disponible 
+#1D9E75, ocupado 
+#378ADD, mantenimiento 
+#EF9F27, limpieza 
+#7F77DD, error hsl(0 84% 60%).
 
-Bordes: rounded-lg — radius: 0.75rem
-Espaciado: base p-6, gaps gap-6, nav items gap-0.5
-Densidad: Media-alta — mucha data visible sin scroll innecesario
+Tipografía & Espaciado
+Inter como fuente base. Números operacionales grandes (40px+, font-bold, tabular-nums). Labels de sección siempre text-[10px] uppercase tracking-widest text-muted-foreground/60. Padding base p-4 en cards, gaps de 8px entre cards, gap-6 entre secciones.
 
-Componentes
+Cards
+rounded-lg border border-border bg-card shadow-none — sin background tintado, sin sombras. El color va en el borde o en un acento lateral de 3px. Los badges sí llevan background semántico al 10%.
 
-Sidebar: Labels de sección text-[10px] uppercase tracking-widest, punto verde en item activo
-Topbar: h-13 delgado, backdrop-blur-sm bg-background/80
-Tablas: Sin zebra striping, badge redondeado para estados
-Botones primarios: bg-primary sin sombras agresivas
-Botones secundarios: variant="outline" size="sm" discretos
+Componentes clave
+Botón primario: bg-primary rounded-lg sin sombra. Con isPending muestra spinner y se deshabilita.
+Inputs: Error inline debajo, nunca toast.
+Sidebar: Labels text-[10px] uppercase tracking-widest, ítem activo con dot verde size-1.5 bg-primary.
+Topbar: h-13 bg-background/80 backdrop-blur-sm.
+Modales: Dialog en desktop, Sheet en mobile. Nunca páginas separadas.
+Reglas duras
+❌ No rounded-xl — siempre rounded-lg ❌ No zebra striping en tablas ❌ No toasts para validación ❌ No backgrounds tintados en cards ✅ Estados vacíos siempre con mensaje ✅ Dark mode con tokens CSS, nunca hex hardcodeado en superficies
 
-Patrones UX
-
-Modales para crear/editar — no páginas separadas
-Botones con estado isPending — feedback inmediato
-Errores inline bajo cada input — no toasts para validación
-Estados vacíos con mensaje — nunca pantalla en blanco
-
-Tono
-Herramienta seria pero no aburrida. Claridad total para el recepcionista a las 2am

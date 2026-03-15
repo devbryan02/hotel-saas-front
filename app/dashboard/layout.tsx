@@ -133,7 +133,7 @@ export default function DashboardLayout({
               <BedDouble className="size-4 text-primary-foreground" />
             </div>
             <span className="text-base font-bold tracking-tight text-sidebar-foreground">
-              cat<span className="text-primary">.IN</span>
+              zowy<span className="text-primary">.pe</span>
             </span>
           </div>
         </SidebarHeader>
