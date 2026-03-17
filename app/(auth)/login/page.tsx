@@ -1,120 +1,129 @@
-'use client'
+import { BedDouble, BedSingle, CalendarCheck, Users, Shield } from 'lucide-react'
+import { LoginForm } from '@/features/auth/components/login-form'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { BedDouble, Mail, Lock, Loader2 } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
-import { useLogin } from '@/features/auth/hooks/use-auth'
+// ─── INFO BULLETS ─────────────────────────────────────────────
+const highlights = [
+  {
+    icon: BedSingle,
+    text: 'Gestión de habitaciones en tiempo real',
+  },
+  {
+    icon: CalendarCheck,
+    text: 'Check-in y check-out desde el celular',
+  },
+  {
+    icon: Users,
+    text: 'Historial completo de huéspedes',
+  },
+  {
+    icon: Shield,
+    text: 'Tus datos seguros y privados',
+  },
+]
 
-const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(1, 'Requerido'),
-})
-
-type LoginFormValues = z.infer<typeof loginSchema>
-
+// ─── PAGE ─────────────────────────────────────────────────────
 export default function LoginPage() {
-  const { mutate: login, isPending } = useLogin()
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-  })
-
-  const onSubmit = (data: LoginFormValues) => login(data)
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen bg-background">
+
+      {/* ── Panel izquierdo (solo desktop) ── */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-primary p-12 text-primary-foreground relative overflow-hidden">
+
+        {/* Fondo decorativo */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -left-24 size-72 rounded-full bg-white/5 blur-3xl" />
+          <div className="absolute -bottom-24 -right-24 size-96 rounded-full bg-white/5 blur-3xl" />
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+              backgroundSize: '28px 28px',
+            }}
+          />
+        </div>
 
         {/* Logo */}
-        <div className="mb-8 flex flex-col items-center gap-3">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-primary">
-            <BedDouble className="size-6 text-primary-foreground" />
+        <div className="relative flex items-center gap-2.5">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+            <BedDouble className="size-5 text-white" />
           </div>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight">
-              cat<span className="text-primary">.IN</span>
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Inicia sesión en tu hotel
+          <span className="text-xl font-black tracking-tight">
+            <a href="/">
+              zowy<span className="opacity-70">.app</span>
+            </a>
+          </span>
+        </div>
+
+        {/* Copy central */}
+        <div className="relative space-y-8">
+          <div>
+            <h2 className="text-3xl font-black leading-tight mb-3">
+              Tu hotel, siempre bajo control
+            </h2>
+            <p className="text-base text-primary-foreground/70 leading-relaxed max-w-sm">
+              Diseñado para hoteles y hostales del Perú. Simple, rápido y desde cualquier celular.
             </p>
           </div>
+
+          {/* Feature bullets */}
+          <ul className="flex flex-col gap-3">
+            {highlights.map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-center gap-3">
+                <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/15">
+                  <Icon className="size-3.5 text-white" />
+                </div>
+                <span className="text-sm text-primary-foreground/80 font-medium">{text}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Form */}
-        <div className="rounded-2xl border bg-card p-6 shadow-sm">
-          <div className="flex flex-col gap-4">
-
-            {/* Email */}
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/50" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="recepcion@hotel.com"
-                  autoComplete="email"
-                  className={cn('pl-9', errors.email && 'border-destructive')}
-                  {...register('email')}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="password" className="text-sm font-medium">
-                Contraseña
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/50" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  className={cn('pl-9', errors.password && 'border-destructive')}
-                  {...register('password')}
-                />
-              </div>
-              {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
-              )}
-            </div>
-
-            <Button
-              className="mt-2 h-11 w-full rounded-xl"
-              disabled={isPending}
-              onClick={handleSubmit(onSubmit)}
-            >
-              {isPending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                'Ingresar'
-              )}
-            </Button>
-
-          </div>
-        </div>
-
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          cat.IN · Sistema de gestión hotelera
+        {/* Footer del panel */}
+        <p className="relative text-xs text-primary-foreground/40 font-medium">
+          © {new Date().getFullYear()} zowy.app · Hecho para hoteleros peruanos 🇵🇪
         </p>
-
       </div>
+
+      {/* ── Panel derecho — Login ── */}
+      <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 sm:px-8">
+        <div className="w-full max-w-sm">
+
+          {/* Logo mobile (solo se ve en móvil) */}
+          <div className="lg:hidden mb-8 flex flex-col items-center gap-3">
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-primary">
+              <BedDouble className="size-6 text-primary-foreground" />
+            </div>
+            <div className="text-center">
+              <h1 className="text-2xl font-black tracking-tight">
+                zowy<span className="text-primary">.app</span>
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Sistema de gestión hotelera
+              </p>
+            </div>
+          </div>
+
+          {/* Headline desktop */}
+          <div className="hidden lg:block mb-8">
+            <h1 className="text-2xl font-black text-foreground tracking-tight">
+              Bienvenido de vuelta 👋
+            </h1>
+            <p className="mt-1.5 text-sm text-muted-foreground">
+              Ingresa con tu cuenta para continuar
+            </p>
+          </div>
+
+          {/* Form + soporte */}
+          <LoginForm />
+
+          {/* Footer */}
+          <p className="mt-8 text-center text-xs text-muted-foreground">
+            zowy.app · Sistema de gestión hotelera
+          </p>
+
+        </div>
+      </div>
+
     </div>
   )
 }

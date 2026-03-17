@@ -2,7 +2,7 @@ import axios from 'axios'
 import { toast } from 'sonner'
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080/api/v1",
+  baseURL: "https://zowy-app-back-production.up.railway.app/api/v1",
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -40,7 +40,7 @@ function getErrorTitle(status?: number): string {
     case 404: return 'No encontrado'
     case 409: return 'Conflicto'
     case 500: return 'Error del servidor'
-    default:  return 'Error'
+    default: return 'Error'
   }
 }
 
