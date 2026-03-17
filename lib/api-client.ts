@@ -2,7 +2,7 @@ import axios from 'axios'
 import { toast } from 'sonner'
 
 const apiClient = axios.create({
-  baseURL: "https://zowy-app-back-production.up.railway.app/api/v1",
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: { 'Content-Type': 'application/json' },
 })
 

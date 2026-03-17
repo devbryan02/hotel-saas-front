@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zowy.app - Gestión hotelera",
+  title: "Zowy.app",
   description: "Zowy.app es una plataforma de gestión hotelera que permite a los hoteleros gestionar sus reservas, habitaciones, huéspedes y mucho más.",
 };
 
