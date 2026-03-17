@@ -41,4 +41,5 @@ export interface OccupationDetailResponse {
 export interface CreateOccupationRequest {
   checkInDate: string   // yyyy-MM-dd
   checkOutDate: string  // yyyy-MM-dd
+  totalPrice?: number
 }

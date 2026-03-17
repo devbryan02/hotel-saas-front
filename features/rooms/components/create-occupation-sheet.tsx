@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useSearchClients, useClients } from '@/features/clients/hooks/use-clients'
+import { useSearchClients } from '@/features/clients/hooks/use-clients'
 import { useCreateOccupation } from '@/features/occupations/hooks/use-occupations'
 import { useRooms } from '../hooks/use-rooms'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   Search, User, BedDouble, CalendarCheck, CalendarX,
-  Moon, ChevronRight, ChevronLeft, Loader2, Check, X,
+  Moon, ChevronRight, ChevronLeft, Loader2, Check, Pencil,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -85,81 +85,46 @@ function StepSelectClient({
     <div className="flex flex-col gap-4">
       <div>
         <h4 className="font-semibold text-base">Seleccionar huésped</h4>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Escribe el nombre o DNI del huésped
-        </p>
+        <p className="text-xs text-muted-foreground mt-0.5">Escribe el nombre o DNI del huésped</p>
       </div>
 
-      {/* Buscador */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
         <Input
-          placeholder="Nombre o DNI..."
           value={query}
           onChange={e => setQuery(e.target.value)}
-          className="pl-9"
-          autoFocus
+          placeholder="Nombre o DNI..."
+          className="pl-9 rounded-xl"
         />
-        {query && (
-          <button
-            onClick={() => { setQuery(''); setDebouncedQuery('') }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          >
-            <X className="size-3.5" />
-          </button>
-        )}
       </div>
 
-      {/* Estado vacío — antes de escribir */}
-      {!hasQuery && !selectedClient && (
-        <div className="flex flex-col items-center gap-2 py-8 text-center">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-muted">
-            <Search className="size-5 text-muted-foreground" />
+      {/* Cliente seleccionado */}
+      {selectedClient && !hasQuery && (
+        <div className="flex items-center gap-3 rounded-xl border border-primary bg-primary/5 ring-1 ring-primary/30 p-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+            <User className="size-4 text-primary" />
           </div>
-          <p className="text-sm font-medium">Busca un huésped</p>
-          <p className="text-xs text-muted-foreground">
-            Escribe mínimo 2 caracteres para buscar
-          </p>
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-sm truncate">{selectedClient.fullName}</p>
+            <p className="text-xs text-muted-foreground">DNI {selectedClient.document}</p>
+          </div>
+          <Check className="size-4 text-primary shrink-0" />
         </div>
       )}
 
-      {/* Cliente ya seleccionado (antes de nueva búsqueda) */}
-      {!hasQuery && selectedClient && (
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Seleccionado
-          </p>
-          <div className="flex items-center gap-3 rounded-xl border-2 border-primary bg-primary/5 p-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-              <User className="size-4 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm truncate">{selectedClient.fullName}</p>
-              <p className="text-xs text-muted-foreground">DNI {selectedClient.document}</p>
-            </div>
-            <Check className="size-4 text-primary shrink-0" />
-          </div>
-        </div>
-      )}
-
-      {/* Loading */}
       {hasQuery && isLoading && (
         <div className="flex justify-center py-6">
           <Loader2 className="size-5 animate-spin text-muted-foreground" />
         </div>
       )}
 
-      {/* Sin resultados */}
       {hasQuery && !isLoading && searchResults.length === 0 && (
         <div className="flex flex-col items-center gap-1 py-6 text-center">
           <p className="text-sm font-medium">Sin resultados</p>
-          <p className="text-xs text-muted-foreground">
-            No se encontró ningún huésped con "{debouncedQuery}"
-          </p>
+          <p className="text-xs text-muted-foreground">No se encontró ningún huésped con "{debouncedQuery}"</p>
         </div>
       )}
 
-      {/* Resultados */}
       {hasQuery && !isLoading && searchResults.length > 0 && (
         <div className="flex flex-col gap-1.5 max-h-52 overflow-y-auto pr-1">
           {searchResults.map(client => (
@@ -180,21 +145,22 @@ function StepSelectClient({
                 <p className="font-medium text-sm truncate">{client.fullName}</p>
                 <p className="text-xs text-muted-foreground">DNI {client.document}</p>
               </div>
-              {selectedClient?.id === client.id && (
-                <Check className="size-4 text-primary shrink-0" />
-              )}
+              {selectedClient?.id === client.id && <Check className="size-4 text-primary shrink-0" />}
             </button>
           ))}
         </div>
       )}
 
-      <Button
-        className="w-full h-11 rounded-2xl"
-        disabled={!selectedClient}
-        onClick={onNext}
-      >
-        Continuar
-        <ChevronRight className="size-4 ml-1" />
+      {!hasQuery && !selectedClient && (
+        <div className="flex flex-col items-center gap-1 py-6 text-center text-muted-foreground">
+          <Search className="size-8 opacity-30" />
+          <p className="text-sm font-medium">Busca un huésped</p>
+          <p className="text-xs">Escribe mínimo 2 caracteres para buscar</p>
+        </div>
+      )}
+
+      <Button className="w-full h-11 rounded-xl" disabled={!selectedClient} onClick={onNext}>
+        Continuar <ChevronRight className="size-4 ml-1" />
       </Button>
     </div>
   )
@@ -216,68 +182,43 @@ function StepDates({
 }) {
   const { register, handleSubmit, watch, formState: { errors } } = useForm<DatesFormValues>({
     resolver: zodResolver(datesSchema),
-    defaultValues: defaultValues ?? {
-      checkInDate: today(),
-      checkOutDate: tomorrow(),
-    },
+    defaultValues: defaultValues ?? { checkInDate: today(), checkOutDate: tomorrow() },
   })
 
   const ci = watch('checkInDate')
   const co = watch('checkOutDate')
-  const nights = ci && co && new Date(co) > new Date(ci) ? calcNights(ci, co) : 0
+  const nights = ci && co && co > ci ? calcNights(ci, co) : 0
   const total = nights * room.pricePerNight
 
   return (
     <form onSubmit={handleSubmit(onNext)} className="flex flex-col gap-4">
       <div>
-        <h4 className="font-semibold text-base">Fechas de estadía</h4>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Hab. {room.roomNumber} · S/ {room.pricePerNight}/noche
-        </p>
+        <h4 className="font-semibold text-base">Fechas de estancia</h4>
+        <p className="text-xs text-muted-foreground mt-0.5">Selecciona el período de la ocupación</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        {/* Check-in */}
+      <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-1.5">
-          <Label className="text-sm font-medium flex items-center gap-1.5">
-            <CalendarCheck className="size-3.5 text-emerald-500" />
-            Check-in
+          <Label className="text-xs font-medium flex items-center gap-1.5">
+            <CalendarCheck className="size-3.5 text-muted-foreground" /> Check-in
           </Label>
-          <Input
-            type="date"
-            min={today()}
-            {...register('checkInDate')}
-            className={cn(errors.checkInDate && 'border-destructive')}
-          />
-          {errors.checkInDate && (
-            <p className="text-xs text-destructive">{errors.checkInDate.message}</p>
-          )}
+          <Input type="date" {...register('checkInDate')} className="rounded-xl" />
+          {errors.checkInDate && <p className="text-xs text-destructive">{errors.checkInDate.message}</p>}
         </div>
-
-        {/* Check-out */}
         <div className="flex flex-col gap-1.5">
-          <Label className="text-sm font-medium flex items-center gap-1.5">
-            <CalendarX className="size-3.5 text-red-400" />
-            Check-out
+          <Label className="text-xs font-medium flex items-center gap-1.5">
+            <CalendarX className="size-3.5 text-muted-foreground" /> Check-out
           </Label>
-          <Input
-            type="date"
-            min={ci || today()}
-            {...register('checkOutDate')}
-            className={cn(errors.checkOutDate && 'border-destructive')}
-          />
-          {errors.checkOutDate && (
-            <p className="text-xs text-destructive">{errors.checkOutDate.message}</p>
-          )}
+          <Input type="date" {...register('checkOutDate')} className="rounded-xl" />
+          {errors.checkOutDate && <p className="text-xs text-destructive">{errors.checkOutDate.message}</p>}
         </div>
       </div>
 
-      {/* Preview noches + total */}
       {nights > 0 && (
-        <div className="rounded-2xl bg-muted/50 p-4 flex items-center justify-between">
+        <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3">
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Moon className="size-3.5" />
-            {nights} {nights === 1 ? 'noche' : 'noches'}
+            <Moon className="size-4" />
+            <span>{nights} {nights === 1 ? 'noche' : 'noches'}</span>
           </div>
           <p className="font-bold text-base">
             {new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(total)}
@@ -286,13 +227,11 @@ function StepDates({
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <Button type="button" variant="outline" className="h-11 rounded-2xl" onClick={onBack}>
-          <ChevronLeft className="size-4 mr-1" />
-          Atrás
+        <Button type="button" variant="outline" className="h-11 rounded-xl" onClick={onBack}>
+          <ChevronLeft className="size-4 mr-1" /> Atrás
         </Button>
-        <Button type="submit" className="h-11 rounded-2xl">
-          Continuar
-          <ChevronRight className="size-4 ml-1" />
+        <Button type="submit" className="h-11 rounded-xl">
+          Continuar <ChevronRight className="size-4 ml-1" />
         </Button>
       </div>
     </form>
@@ -300,7 +239,7 @@ function StepDates({
 }
 
 // ─────────────────────────────────────────
-// PASO 3 — Confirmar
+// PASO 3 — Confirmar (con total editable)
 // ─────────────────────────────────────────
 function StepConfirm({
   room,
@@ -314,11 +253,40 @@ function StepConfirm({
   client: ClientListItemResponse
   dates: DatesFormValues
   onBack: () => void
-  onConfirm: () => void
+  onConfirm: (customTotal: number) => void
   isPending: boolean
 }) {
   const nights = calcNights(dates.checkInDate, dates.checkOutDate)
-  const total = nights * room.pricePerNight
+  const calculatedTotal = nights * room.pricePerNight
+
+  const [editingTotal, setEditingTotal] = useState(false)
+  const [totalInput, setTotalInput] = useState(calculatedTotal.toFixed(2))
+  const [totalError, setTotalError] = useState('')
+
+  const displayTotal = parseFloat(totalInput) || 0
+  const isCustom = Math.abs(displayTotal - calculatedTotal) > 0.01
+
+  function handleTotalChange(val: string) {
+    setTotalInput(val)
+    const num = parseFloat(val)
+    if (!val || isNaN(num) || num <= 0) {
+      setTotalError('Ingresa un monto válido mayor a 0')
+    } else {
+      setTotalError('')
+    }
+  }
+
+  function handleConfirm() {
+    const num = parseFloat(totalInput)
+    if (!num || num <= 0) {
+      setTotalError('Ingresa un monto válido mayor a 0')
+      return
+    }
+    onConfirm(num)
+  }
+
+  const formatPEN = (n: number) =>
+    new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(n)
 
   return (
     <div className="flex flex-col gap-4">
@@ -327,16 +295,16 @@ function StepConfirm({
         <p className="text-xs text-muted-foreground mt-0.5">Revisa los datos antes de registrar</p>
       </div>
 
-      <div className="rounded-2xl border p-4 flex flex-col gap-3">
+      <div className="rounded-xl border border-border p-4 flex flex-col gap-3">
 
         {/* Habitación */}
         <div className="flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-100 shrink-0">
-            <BedDouble className="size-4 text-emerald-600" />
+          <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-950/40 shrink-0">
+            <BedDouble className="size-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Habitación</p>
-            <p className="font-semibold">Hab. {room.roomNumber} · {room.roomType}</p>
+            <p className="font-semibold">Hab. {room.roomNumber} — {room.roomType}</p>
           </div>
         </div>
 
@@ -344,8 +312,8 @@ function StepConfirm({
 
         {/* Cliente */}
         <div className="flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-blue-100 shrink-0">
-            <User className="size-4 text-blue-600" />
+          <div className="flex size-9 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-950/40 shrink-0">
+            <User className="size-4 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Huésped</p>
@@ -358,42 +326,91 @@ function StepConfirm({
 
         {/* Fechas */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex items-start gap-2">
-            <CalendarCheck className="mt-0.5 size-4 text-emerald-500 shrink-0" />
-            <div>
-              <p className="text-xs text-muted-foreground">Check-in</p>
-              <p className="text-sm font-medium">{formatDate(dates.checkInDate)}</p>
-            </div>
+          <div>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <CalendarCheck className="size-3" /> Check-in
+            </p>
+            <p className="text-sm font-medium">{formatDate(dates.checkInDate)}</p>
           </div>
-          <div className="flex items-start gap-2">
-            <CalendarX className="mt-0.5 size-4 text-red-400 shrink-0" />
-            <div>
-              <p className="text-xs text-muted-foreground">Check-out</p>
-              <p className="text-sm font-medium">{formatDate(dates.checkOutDate)}</p>
-            </div>
+          <div>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <CalendarX className="size-3" /> Check-out
+            </p>
+            <p className="text-sm font-medium">{formatDate(dates.checkOutDate)}</p>
           </div>
         </div>
 
         <div className="h-px bg-border" />
 
-        {/* Total */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Moon className="size-3.5" />
-            {nights} {nights === 1 ? 'noche' : 'noches'} · S/ {room.pricePerNight}/noche
+        {/* Total — editable */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Moon className="size-3.5 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground">{nights} {nights === 1 ? 'noche' : 'noches'} × {formatPEN(room.pricePerNight)}</p>
+            </div>
+            {!editingTotal && (
+              <button
+                onClick={() => setEditingTotal(true)}
+                className="flex items-center gap-1 text-xs text-primary hover:underline"
+              >
+                <Pencil className="size-3" /> Editar
+              </button>
+            )}
           </div>
-          <p className="text-lg font-bold">
-            {new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(total)}
-          </p>
+
+          {editingTotal ? (
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-muted-foreground shrink-0">S/</span>
+                <Input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={totalInput}
+                  onChange={e => handleTotalChange(e.target.value)}
+                  className="rounded-lg h-9 text-base font-bold"
+                  autoFocus
+                />
+                <button
+                  onClick={() => {
+                    setTotalInput(calculatedTotal.toFixed(2))
+                    setTotalError('')
+                    setEditingTotal(false)
+                  }}
+                  className="text-xs text-muted-foreground hover:text-foreground shrink-0 whitespace-nowrap"
+                >
+                  Restablecer
+                </button>
+              </div>
+              {totalError && <p className="text-xs text-destructive">{totalError}</p>}
+              {isCustom && !totalError && (
+                <p className="text-xs text-amber-600 dark:text-amber-400">
+                  ⚠ Total personalizado — calculado: {formatPEN(calculatedTotal)}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center justify-between rounded-lg bg-primary/5 px-3 py-2">
+              <span className="text-xs text-muted-foreground">Total a cobrar</span>
+              <div className="flex items-center gap-2">
+                {isCustom && (
+                  <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/40 px-1.5 py-0.5 rounded-md">
+                    Personalizado
+                  </span>
+                )}
+                <span className="text-lg font-bold text-primary">{formatPEN(displayTotal)}</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="outline" className="h-11 rounded-2xl" onClick={onBack} disabled={isPending}>
-          <ChevronLeft className="size-4 mr-1" />
-          Atrás
+        <Button type="button" variant="outline" className="h-11 rounded-xl" onClick={onBack} disabled={isPending}>
+          <ChevronLeft className="size-4 mr-1" /> Atrás
         </Button>
-        <Button className="h-11 rounded-2xl" onClick={onConfirm} disabled={isPending}>
+        <Button className="h-11 rounded-xl" onClick={handleConfirm} disabled={isPending || !!totalError}>
           {isPending
             ? <Loader2 className="size-4 animate-spin" />
             : <><Check className="size-4 mr-1.5" />Registrar</>
@@ -428,10 +445,7 @@ function StepIndicator({ current }: { current: number }) {
             </span>
           </div>
           {i < steps.length - 1 && (
-            <div className={cn(
-              'h-px w-6 transition-colors',
-              i + 1 < current ? 'bg-primary' : 'bg-muted'
-            )} />
+            <div className={cn('h-px w-6 transition-colors', i + 1 < current ? 'bg-primary' : 'bg-muted')} />
           )}
         </div>
       ))}
@@ -440,7 +454,7 @@ function StepIndicator({ current }: { current: number }) {
 }
 
 // ─────────────────────────────────────────
-// COMPONENTE PRINCIPAL
+// WIZARD PRINCIPAL
 // ─────────────────────────────────────────
 interface CreateOccupationSheetProps {
   room: RoomListItemResponse
@@ -456,15 +470,16 @@ function OccupationWizard({ room, tenantId, onClose }: CreateOccupationSheetProp
   const { mutate: createOccupation, isPending } = useCreateOccupation(tenantId)
   const { refetch } = useRooms(tenantId)
 
-  function handleConfirm() {
+  function handleConfirm(customTotal: number) {
     if (!selectedClient || !dates) return
     createOccupation(
-      { roomId: room.id, clientId: selectedClient.id, data: dates },
       {
-        onSuccess: () => {
-          refetch()
-          onClose()
-        },
+        roomId: room.id,
+        clientId: selectedClient.id,
+        data: { ...dates, totalPrice: customTotal },
+      },
+      {
+        onSuccess: () => { refetch(); onClose() },
       }
     )
   }
@@ -505,10 +520,12 @@ function OccupationWizard({ room, tenantId, onClose }: CreateOccupationSheetProp
   )
 }
 
+// ─────────────────────────────────────────
+// EXPORT PRINCIPAL
+// ─────────────────────────────────────────
 export function CreateOccupationSheet({ room, tenantId, onClose }: CreateOccupationSheetProps) {
   const isMobile = useIsMobile()
 
-  // DESKTOP — Dialog centrado
   if (!isMobile) {
     return (
       <Dialog open onOpenChange={open => !open && onClose()}>
@@ -522,9 +539,8 @@ export function CreateOccupationSheet({ room, tenantId, onClose }: CreateOccupat
     )
   }
 
-  // MOBILE — Bottom sheet
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-md" onClick={onClose}>
       <div
         className="absolute bottom-0 left-0 right-0 rounded-t-3xl bg-background shadow-2xl"
         onClick={e => e.stopPropagation()}
