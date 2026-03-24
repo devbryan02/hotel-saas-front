@@ -17,7 +17,16 @@ export function useLogin() {
     onSuccess: (data) => {
       login(data)
       toast.success('Bienvenido 👋', { description: data.email })
-      router.replace('/dashboard')
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 100)
+    },
+    onError: (error: unknown) => {
+      const message =
+        error instanceof Error
+          ? error.message
+          : (error as { message?: string })?.message ?? 'Email o contraseña incorrectos'
+      toast.error('Error al iniciar sesión', { description: message })
     },
   })
 }
@@ -28,9 +37,8 @@ export function useLogout() {
 
   return useCallback(() => {
     logout()
-    router.replace('/login')
+    router.push('/login')
   }, [logout, router])
 }
 
-// Re-exporta useAuthContext como useAuth para uso cotidiano en componentes
 export { useAuthContext as useAuth }
