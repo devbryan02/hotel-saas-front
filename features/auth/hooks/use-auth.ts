@@ -17,9 +17,8 @@ export function useLogin() {
     onSuccess: (data) => {
       login(data)
       toast.success('Bienvenido 👋', { description: data.email })
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 100)
+      router.push("/dashboard")
+      router.refresh()
     },
     onError: (error: unknown) => {
       const message =
