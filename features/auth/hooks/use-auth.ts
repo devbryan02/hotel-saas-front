@@ -17,7 +17,7 @@ export function useLogin() {
     onSuccess: (data) => {
       login(data)
       toast.success('Bienvenido 👋', { description: data.email })
-      router.push("/dashboard")
+      window.location.href = '/dashboard'
     },
     onError: (error: unknown) => {
       const message =
