@@ -95,7 +95,9 @@ export default function LoginPage() {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-black tracking-tight">
-                zowy<span className="text-primary">.app</span>
+                <a href="/">
+                  zowy<span className="text-primary">.app</span>
+                </a>
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 Sistema de gestión hotelera

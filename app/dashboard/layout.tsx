@@ -133,7 +133,7 @@ export default function DashboardLayout({
               <BedDouble className="size-4 text-primary-foreground" />
             </div>
             <span className="text-base font-bold tracking-tight text-sidebar-foreground">
-              zowy<span className="text-primary">.pe</span>
+              zowy<span className="text-primary">.app</span>
             </span>
           </div>
         </SidebarHeader>
@@ -206,7 +206,7 @@ export default function DashboardLayout({
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink
-                  href="/"
+                  href="/dashboard"
                   className="text-xs text-muted-foreground hover:text-foreground"
                 >
                   Inicio
