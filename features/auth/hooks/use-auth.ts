@@ -18,7 +18,6 @@ export function useLogin() {
       login(data)
       toast.success('Bienvenido 👋', { description: data.email })
       router.push("/dashboard")
-      router.refresh()
     },
     onError: (error: unknown) => {
       const message =
